@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_theme" IsDarkMode="false" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudMainContent Class="mud-theme-primary d-flex justify-center align-content-center" Style="height: 100vh">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    MudTheme _theme = new MudTheme
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = Colors.LightBlue.Darken1,
+            Secondary = Colors.LightBlue.Darken4,
+            Tertiary = Colors.Shades.White,
+            Background = Colors.Shades.White,
+            DrawerBackground = Colors.LightBlue.Darken1,
+            DrawerText = Colors.Shades.White,
+            DrawerIcon = Colors.Shades.White,
+            HoverOpacity = 0.16,
+
+        },
+        PaletteDark = new PaletteDark
+        {
+            HoverOpacity = 0.16,
+        },
+        LayoutProperties = new LayoutProperties
+        {
+            AppbarHeight = "0"
+        }
+    };
+}

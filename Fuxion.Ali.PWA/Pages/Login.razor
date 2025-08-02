@@ -1,0 +1,94 @@
+﻿@page "/login"
+@layout LoginLayout
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<PageTitle>Login</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="align-self-center">
+    <MudCard Elevation="3" Class="pa-2">
+        <MudCardHeader Class="d-flex justify-center">
+            <MudImage Src="/icon-512.png" Alt="Logo" Height="50" />
+        </MudCardHeader>
+
+        <MudCardContent>
+            <MudForm @ref="form" Spacing="3">
+                <MudText Typo="Typo.h5" Align="Align.Center">Iniciar sesión</MudText>
+
+                <MudTextField @bind-Value="_username"
+                              Label="Usuario"
+                              Variant="Variant.Outlined"
+                              Required
+                              For="@(() => _username)"
+                              FullWidth="true"
+                              Margin="Margin.Dense" />
+
+                <MudTextField @bind-Value="_password"
+                              Label="Contraseña"
+                              Variant="Variant.Outlined"
+                              Required
+                              For="@(() => _password)"
+                              FullWidth="true"
+                              InputType="_passwordInputType"
+                              Adornment="Adornment.End"
+                              AdornmentIcon="@_passwordAdornmentIcon" 
+                              OnAdornmentClick="TogglePasswordVisibility"
+                              Margin="Margin.Dense" />
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="_loading"
+                           OnClick="HandleLogin"
+                           FullWidth="true">
+                    <MudText>Iniciar sesión</MudText>
+                    @if (_loading)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate />
+                    }
+                </MudButton>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private string _username = string.Empty;
+    private string _password = string.Empty;
+    private MudForm form;
+
+    private InputType _passwordInputType { get; set; }  = InputType.Password;
+    private string _passwordAdornmentIcon { get; set; } = Icons.Material.Filled.Visibility;
+    private bool _loading = false;
+
+    private async Task HandleLogin()
+    {
+        _loading = true;
+        await form!.Validate();
+
+        if (!form.IsValid)
+        {
+            Snackbar.Add("Ingrese un usuario y contraseña.", Severity.Error);
+            _loading = false;
+            return;
+        }
+
+        await Task.Delay(1000);
+        Snackbar.Add("Inicio de sesión exitoso!", Severity.Success);
+
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        if (_passwordInputType == InputType.Password)
+        {
+            _passwordInputType = InputType.Text;
+            _passwordAdornmentIcon = Icons.Material.Filled.VisibilityOff;
+        }
+        else
+        {
+            _passwordInputType = InputType.Password;
+            _passwordAdornmentIcon = Icons.Material.Filled.Visibility;
+        }
+    }
+}

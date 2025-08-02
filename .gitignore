@@ -1,0 +1,62 @@
+# Archivos de Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de Visual Studio Code
+.vscode/
+
+# Build y publicación
+bin/
+obj/
+out/
+Generated/
+wwwroot/dist/
+
+# Archivos temporales
+*.log
+*.tmp
+*.temp
+
+# Configuración local de usuario
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Node/npm (si se usa para PWA o tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Archivos generados por herramientas
+wwwroot/service-worker.published.js
+wwwroot/service-worker.js
+wwwroot/manifest.json
+wwwroot/manifest.webmanifest
+
+# Certificados de desarrollo HTTPS
+*.pfx
+*.pem
+*.key
+*.crt
+
+# Archivos de publicación
+publish/
+wwwroot/_framework/
+wwwroot/_content/
+
+# Configuración de Rider/JetBrains (opcional)
+.idea/
+*.sln.iml
+
+# Archivos del entorno de desarrollo
+.env
+.env.*
