@@ -1,0 +1,69 @@
+﻿@page "/users"
+@using Fuxion.Ali.Contracts.Auth.Login
+@attribute [Authorize(Roles = "SuperAdmin")]
+
+<PageTitle>Usuarios</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="d-flex flex-column my-6 gap-4 data-table">
+    <MudText Typo="Typo.h4">Usuarios registrados</MudText>
+    <MudDataGrid T="LoginRequest" Items="_users" SortMode="SortMode.Multiple" Filterable QuickFilter="_quickFilter" 
+        HeaderClass="mud-theme-primary"
+        Hover Striped Hideable RowClick="RowClicked">
+        <ToolBarContent>
+            <MudTextField @bind-Value="_searchString" Placeholder="Buscar por nombre, usuario, correo o teléfono" 
+                Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Immediate="true"
+                Variant="Variant.Outlined" Margin="Margin.Dense" Typo="Typo.body2"
+                />
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd"
+            >
+                Nuevo usuario
+            </MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Username" Title="Usuario" />
+            <PropertyColumn Property="x => x.Password" Title="Contraseña" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="LoginRequest" />
+        </PagerContent>
+    </MudDataGrid>
+    <div class="d-flex flex-column">@_clicked</div>
+</MudContainer>
+
+@code {
+    private IEnumerable<LoginRequest> _users = new List<LoginRequest>();
+    private string _searchString = string.Empty;
+    private string _clicked = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+        // crea un list<loginrequest> con 20 usuarios
+        var usersList = new List<LoginRequest>();
+        for (int i = 1; i <= 33; i++)
+        {
+            usersList.Add(new LoginRequest { Username = $"user{i}", Password = $"password{i+5}" });
+        }
+        _users = usersList;
+    }
+
+    private Func<LoginRequest, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Username.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.Password.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    };
+
+    private void RowClicked(DataGridRowClickEventArgs<LoginRequest> args)
+    {
+        _clicked = $"{args.RowIndex}: {System.Text.Json.JsonSerializer.Serialize(args.Item)}";
+    }
+}

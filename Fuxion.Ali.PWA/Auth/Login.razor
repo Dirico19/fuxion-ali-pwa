@@ -1,7 +1,10 @@
 ﻿@page "/login"
+@using Fuxion.Ali.Contracts.Auth.Login
 @layout LoginLayout
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
+@inject IValidator<LoginRequest> Validator
+@inject IAuthService AuthService
 
 <PageTitle>Login</PageTitle>
 
@@ -12,28 +15,36 @@
         </MudCardHeader>
 
         <MudCardContent>
-            <MudForm @ref="form" Spacing="3">
+            <MudForm @ref="form" Model="_model" Validation="Validator.ValidateValue()" ValidationDelay="0"
+                     Spacing="3">
                 <MudText Typo="Typo.h5" Align="Align.Center">Iniciar sesión</MudText>
 
-                <MudTextField @bind-Value="_username"
+                <MudTextField @bind-Value="_model.Username"
                               Label="Usuario"
-                              Variant="Variant.Outlined"
+                              For="@(() => _model.Username)"
                               Required
-                              For="@(() => _username)"
-                              FullWidth="true"
-                              Margin="Margin.Dense" />
+                              Immediate
+                              ShrinkLabel
+                              Variant="Variant.Outlined"
+                              FullWidth
+                              Margin="Margin.Dense" 
+                              />
 
-                <MudTextField @bind-Value="_password"
+                <MudTextField @bind-Value="_model.Password"
                               Label="Contraseña"
-                              Variant="Variant.Outlined"
+                              For="@(() => _model.Password)"
                               Required
-                              For="@(() => _password)"
-                              FullWidth="true"
+                              Immediate
+                              ShrinkLabel
+                              Variant="Variant.Outlined"
+                              FullWidth
+                              Margin="Margin.Dense" 
                               InputType="_passwordInputType"
                               Adornment="Adornment.End"
                               AdornmentIcon="@_passwordAdornmentIcon" 
                               OnAdornmentClick="TogglePasswordVisibility"
-                              Margin="Margin.Dense" />
+                              IconSize="Size.Small"
+                              />
 
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Primary"
@@ -43,7 +54,7 @@
                     <MudText>Iniciar sesión</MudText>
                     @if (_loading)
                     {
-                        <MudProgressCircular Size="Size.Small" Indeterminate />
+                        <MudProgressCircular Size="Size.Small" Indeterminate Class="ml-2" />
                     }
                 </MudButton>
             </MudForm>
@@ -52,9 +63,8 @@
 </MudContainer>
 
 @code {
-    private string _username = string.Empty;
-    private string _password = string.Empty;
-    private MudForm form;
+    private LoginRequest _model = new();
+    private MudForm form = null!;
 
     private InputType _passwordInputType { get; set; }  = InputType.Password;
     private string _passwordAdornmentIcon { get; set; } = Icons.Material.Filled.Visibility;
@@ -63,17 +73,24 @@
     private async Task HandleLogin()
     {
         _loading = true;
-        await form!.Validate();
-
+        await form.Validate();
         if (!form.IsValid)
         {
-            Snackbar.Add("Ingrese un usuario y contraseña.", Severity.Error);
+            Snackbar.Add("Por favor, completa todos los campos correctamente.", MudBlazor.Severity.Error);
             _loading = false;
             return;
         }
 
-        await Task.Delay(1000);
-        Snackbar.Add("Inicio de sesión exitoso!", Severity.Success);
+        var result = await AuthService.LoginAsync(_model);
+        if (!result.IsSuccess)
+        {
+            Snackbar.Add(result.Message!, MudBlazor.Severity.Error);
+            _loading = false;
+            return;
+        }
+
+        Snackbar.Add(result.Message ?? "Inicio de sesión exitoso!", MudBlazor.Severity.Success);
+        _loading = false;
 
         NavigationManager.NavigateTo("/");
     }

@@ -60,3 +60,5 @@ wwwroot/_content/
 # Archivos del entorno de desarrollo
 .env
 .env.*
+
+nuget.config

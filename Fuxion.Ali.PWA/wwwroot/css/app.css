@@ -63,3 +63,7 @@
 code {
     color: #c02d76;
 }
+
+.data-table .mud-theme-primary * {
+    color: var(--mud-palette-primary-text);
+}

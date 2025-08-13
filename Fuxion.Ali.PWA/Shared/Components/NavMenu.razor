@@ -1,0 +1,20 @@
+﻿@inject IAuthService AuthService
+<MudNavMenu Color="Color.Tertiary" Rounded Class="pa-2 mud-height-full d-flex flex-column">
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Inicio</MudNavLink>
+    <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.PeopleAlt">Usuarios</MudNavLink>
+    @if (_isAdmin)
+    {
+        <MudNavLink Href="/weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Air">Clima</MudNavLink>
+    }
+    <MudSpacer />
+    <MudNavLink Href="/logout" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ExitToApp">Cerrar sesión</MudNavLink>
+</MudNavMenu>
+
+@code {
+    private bool _isAdmin { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _isAdmin = await AuthService.IsInRoleAsync("Admin");
+    }
+}

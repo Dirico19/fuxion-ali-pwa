@@ -1,5 +1,6 @@
 ﻿@page "/weather"
 @inject HttpClient Http
+@* @attribute [Authorize(Roles = "Admin")] *@
 
 <PageTitle>Weather</PageTitle>
 
@@ -41,7 +42,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        await Task.Delay(500);
+        // forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        forecasts = new[]
+        {
+            new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now), TemperatureC = 20, Summary = "Warm" },
+            new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TemperatureC = 22, Summary = "Hot" },
+            new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now.AddDays(2)), TemperatureC = 18, Summary = "Cool" }
+        };
     }
 
     public class WeatherForecast

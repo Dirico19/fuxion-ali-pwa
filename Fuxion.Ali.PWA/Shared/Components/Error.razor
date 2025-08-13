@@ -1,0 +1,60 @@
+﻿@inject NavigationManager NavigationManager
+
+<PageTitle>@_title</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="my-auto">
+    <div class="d-flex flex-column align-center gap-4 mb-20" style="text-align: center">
+        <MudText Typo="Typo.h1" Style="font-weight: bold">@ErrorCode</MudText>
+        <MudText Typo="Typo.h4" Color="Color.Tertiary"><MudIcon Color="Color.Tertiary" Size="Size.Large" Icon="@_iconName" /> @_title</MudText>
+        <MudText Typo="Typo.body1" Color="Color.Tertiary">@_description</MudText>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="GoBack">
+            Volver al inicio
+        </MudButton>
+    </div>
+</MudContainer>
+
+@code {
+    [Parameter] public int ErrorCode { get; set; }
+    [Parameter] public string? CustomTitle { get; set; }
+    [Parameter] public string? CustomDescription { get; set; }
+
+    public string _title { get; set; } = "";
+    public string _description { get; set; } = "";
+    private string _iconName { get; set; } = Icons.Material.Filled.Warning;
+
+    protected override void OnParametersSet()
+    {
+        switch (ErrorCode)
+        {
+            case 404:
+                _title = CustomTitle ?? "Página no encontrada";
+                _description = CustomDescription ?? "La página que buscas no existe.";
+                _iconName = Icons.Material.Filled.SearchOff;
+                break;
+
+            case 403:
+                _title = CustomTitle ?? "Acceso prohibido";
+                _description = CustomDescription ?? "No tienes permiso para acceder a esta página.";
+                _iconName = Icons.Material.Filled.Block;
+                break;
+
+            case 401:
+                _title = CustomTitle ?? "No autorizado";
+                _description = CustomDescription ?? "Debes iniciar sesión para continuar.";
+                _iconName = Icons.Material.Filled.Lock;
+                break;
+
+            default:
+                _title = CustomTitle ?? "Error desconocido";
+                _description = CustomDescription ?? "Ha ocurrido un error inesperado.";
+                _iconName = Icons.Material.Filled.Warning;
+                break;
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/", true);
+    }
+}
